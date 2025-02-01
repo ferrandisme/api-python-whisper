@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcriptor de Audio</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+
+        h1 {
+            color: #e2e8f0;
+        }
+
+        #result {
+            font-size: 1.2em;
+            color: #e2e8f0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col justify-center items-center">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-center">
+            <div class="w-full max-w-md">
+                <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                    <div class="bg-gray-700 text-white text-center py-4">
+                        <h1 class="text-2xl font-bold">Transcriptor de Audio</h1>
+                    </div>
+                    <div class="p-6">
+                        <form id="upload-form" action="/api/transcribe/" method="post" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="file-input" class="block text-gray-300">Selecciona un archivo de audio</label>
+                                <input id="file-input" type="file" name="file" class="mt-2 block w-full text-gray-300 border border-gray-600 rounded-md bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Transcribir</button>
+                        </form>
+                        <div id="result" class="mt-4 text-center text-gray-300"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center mt-5">
+            <div class="w-full max-w-md text-center">
+                <a href="https://ferrandis.me" target="_blank" class="block bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">Mi Web</a>
+                <a href="/docs" target="_blank" class="block bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Ver API</a>
+            </div>
+        </div>
+        <div class="flex justify-center mt-3">
+            <div class="w-full max-w-md text-center text-gray-300">
+                <p>Creado por Adrian Ferrandis 2025</p>
+                <p class="text-gray-500">El único propósito de esta web es mostrar una demo de mi código en Github. La aplicación no utilizará tus datos para entrenar modelos, puedes ver su código en Github para ver todo lo que hace. Está alojada de forma abierta de forma desinteresada. No me hago responsable de posibles errores. Este hosting está pensado para pruebas y en caso de querer usarlo con datos sensibles o privados, tenéis disponible el código en GitHub para hostearlo vosotros.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('upload-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            if (fileInput.files.length === 0) return;
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/api/transcribe/', {
+                method: 'POST',
+                body: formData
+            });
+            if(response.ok) {
+                const data = await response.json();
+                document.getElementById('result').innerText = data.transcription;
+            } else {
+                document.getElementById('result').innerText = "Error al transcribir.";
+            }
+        });
+    </script>
+</body>
+</html>
