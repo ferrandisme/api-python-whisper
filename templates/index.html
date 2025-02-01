@@ -41,6 +41,7 @@
                             <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Transcribir</button>
                         </form>
                         <div id="result" class="mt-4 text-center text-gray-300"></div>
+                        <div id="loading" class="hidden text-center text-gray-300">Cargando...</div>
                     </div>
                 </div>
             </div>
@@ -54,12 +55,15 @@
         <div class="flex justify-center mt-3">
             <div class="w-full max-w-md text-center text-gray-300">
                 <p>Creado por Adrian Ferrandis 2025</p>
-                <p class="text-gray-500">El único propósito de esta web es mostrar una demo de mi código en Github. La aplicación no utilizará tus datos para entrenar modelos, puedes ver su código en Github para ver todo lo que hace. Está alojada de forma abierta de forma desinteresada. No me hago responsable de posibles errores. Este hosting está pensado para pruebas y en caso de querer usarlo con datos sensibles o privados, tenéis disponible el código en GitHub para hostearlo vosotros.</p>
+                <p class="text-gray-500">
+                    Esta web tiene como único propósito mostrar una demo de mi código en GitHub. La aplicación no utilizará tus datos para entrenar modelos. Puedes ver su código en GitHub para conocer todas sus funcionalidades. Está alojada de forma abierta y desinteresada. No me hago responsable de posibles errores o filtraciones. Este hosting está pensado para pruebas y, en caso de querer usarlo con datos sensibles o privados, tienes disponible el código en GitHub para alojarlo tú mismo.
+                </p>
             </div>
         </div>
     </div>
     <script>
         const form = document.getElementById('upload-form');
+        const loading = document.getElementById('loading');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const fileInput = document.getElementById('file-input');
@@ -67,10 +71,12 @@
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
 
+            loading.classList.remove('hidden');
             const response = await fetch('/api/transcribe/', {
                 method: 'POST',
                 body: formData
             });
+            loading.classList.add('hidden');
             if(response.ok) {
                 const data = await response.json();
                 document.getElementById('result').innerText = data.transcription;
