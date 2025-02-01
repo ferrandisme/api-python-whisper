@@ -36,6 +36,15 @@ async def transcribe_audio(file: UploadFile = File(...)):
     return {"transcription": transcription}
 
 
+@app.head("/", include_in_schema=False)
+async def head_home(request: Request):
+    response = HTMLResponse()
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def get_home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    response = templates.TemplateResponse("index.html", {"request": request})
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
